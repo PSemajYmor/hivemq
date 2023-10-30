@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HiveMQ Publisher</title>
+</head>
+<body>
+    <button id="button0" onclick="publishMessage('0')">Publish 0</button>
+    <button id="button1" onclick="publishMessage('1')">Publish 1</button>
+</body>
+<script>
+    const websocket = new WebSocket("wss://0136472159f54601870cc21f08a1a21d.s1.eu.hivemq.cloud:8884/mqtt");
+
+    websocket.onopen = (event) => {
+        console.log("Connected to HiveMQ");
+    };
+
+    websocket.onclose = (event) => {
+        console.log("Connection to HiveMQ closed");
+    };
+
+    websocket.onerror = (event) => {
+        console.error("WebSocket error:", event);
+    };
+
+    function publishMessage(message) {
+        const topic = "d1"; // Specify the topic you want to publish to
+
+        const publishPacket = {
+            type: 3, // Publish
+            dup: false,
+            qos: 0, // Quality of Service (0, 1, or 2)
+            retain: false,
+            topic,
+            payload: message,
+        };
+
+        const publishString = JSON.stringify(publishPacket);
+
+        websocket.send(publishString);
+    }
+</script>
+</html>
