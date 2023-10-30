@@ -1,42 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>HiveMQ Publisher</title>
+    <title>Publish to HiveMQ</title>
 </head>
 <body>
-    <button id="button0" onclick="publishMessage('0')">Publish 0</button>
-    <button id="button1" onclick="publishMessage('1')">Publish 1</button>
-</body>
-<script>
-    const websocket = new WebSocket("wss://0136472159f54601870cc21f08a1a21d.s1.eu.hivemq.cloud:8884/mqtt");
+    <h1>Publish Data to HiveMQ</h1>
+    <button id="button0">Send 0</button>
+    <button id="button1">Send 1</button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.js"></script>
 
-    websocket.onopen = (event) => {
-        console.log("Connected to HiveMQ");
-    };
+    <script>
+        // Set up MQTT client
+        var mqttClient = new Paho.MQTT.Client("0136472159f54601870cc21f08a1a21d.s1.eu.hivemq.cloud", Number(8883), "data1");
 
-    websocket.onclose = (event) => {
-        console.log("Connection to HiveMQ closed");
-    };
-
-    websocket.onerror = (event) => {
-        console.error("WebSocket error:", event);
-    };
-
-    function publishMessage(message) {
-        const topic = "d1"; // Specify the topic you want to publish to
-
-        const publishPacket = {
-            type: 3, // Publish
-            dup: false,
-            qos: 0, // Quality of Service (0, 1, or 2)
-            retain: false,
-            topic,
-            payload: message,
+        // Set up MQTT connection options
+        var options = {
+            useSSL: true,
+            userName: "data1",
+            password: "Data1234",
+            onSuccess: onConnect,
         };
 
-        const publishString = JSON.stringify(publishPacket);
+        // Connect to MQTT broker
+        mqttClient.connect(options);
 
-        websocket.send(publishString);
-    }
-</script>
+        // MQTT onConnect callback
+        function onConnect() {
+            console.log("Connected to HiveMQ");
+        }
+
+        // Function to publish a message
+        function publishMessage(topic, message) {
+            var messageObj = new Paho.MQTT.Message(message);
+            messageObj.destinationName = topic;
+            mqttClient.send(messageObj);
+        }
+
+        // Button event listeners
+        document.getElementById("button0").addEventListener("click", function () {
+            publishMessage("d1", "0");
+            console.log("Published 0 to topic");
+        });
+
+        document.getElementById("button1").addEventListener("click", function () {
+            publishMessage("d1", "1");
+            console.log("Published 1 to topic");
+        }
+    </script>
+</body>
 </html>
