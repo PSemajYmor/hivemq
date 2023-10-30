@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1>Publish Data to HiveMQ</h1>
-    <button id="button0">Send 0</button>
+    <button id="button0">Send 00</button>
     <button id="button1">Send 1</button>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.2/mqttws31.js"></script>
 
@@ -45,7 +45,7 @@
         document.getElementById("button1").addEventListener("click", function () {
             publishMessage("d1", "1");
             console.log("Published 1 to topic");
-        }
+        });
     </script>
 </body>
 </html>
